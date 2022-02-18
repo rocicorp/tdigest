@@ -1,6 +1,12 @@
-tdigest
-============
-[![Build Status][travis-image]][travis-url] [![NPM version][npm-image]][npm-url] [![NPM download][download-image]][npm-url]
+This is a fork of [welch/tdigest](https://github.com/welch/tdigest.git) using ESM
+
+Install
+
+```
+npm install githup:rocicorp/tdigest
+```
+
+# tdigest
 
 Javascript implementation of Dunning's T-Digest for streaming quantile approximation
 
@@ -19,7 +25,7 @@ with some boundary and performance tweaks.
 
 **changes in 0.1.1:**
 
-1. percentile on an empty digest returns *undefined* or array of *undefined*
+1. percentile on an empty digest returns _undefined_ or array of _undefined_
    instead of NaN
 
 2. upgraded bintrees to get bugfix.
@@ -55,15 +61,15 @@ bugfixes and speed improvements.
 **changes in 0.0.5:**
 
 API Overhaul:
-* asArray() -> toArray()
-* redigest() -> compress()
-* digest() -> push()
-* pushing an array no longer triggers compression
+
+- asArray() -> toArray()
+- redigest() -> compress()
+- digest() -> push()
+- pushing an array no longer triggers compression
 
 bugfixes and speed improvements.
 
-quickstart
-------------
+## quickstart
 
 #### node.js:
 
@@ -72,16 +78,17 @@ npm install tdigest
 ```
 
 ```javascript
-var TDigest = require('tdigest').TDigest;
-var x=[], N = 100000;
-for (var i = 0 ; i < N ; i += 1) {
-    x.push(Math.random() * 10 - 5);
-};
+import {TDigest} from 'tdigest';
+let x = [],
+  N = 100000;
+for (let i = 0; i < N; i += 1) {
+  x.push(Math.random() * 10 - 5);
+}
 td = new TDigest();
 td.push(x);
 td.compress();
 console.log(td.summary());
-console.log("median ~ "+td.percentile(0.5));
+console.log('median ~ ' + td.percentile(0.5));
 ```
 
 See also [example.js](https://github.com/welch/tdigest/blob/master/example.js) in this package.
@@ -92,10 +99,13 @@ The `grunt dist` task has been configured to generate
 a self-contained [UMD-wrapped](https://github.com/umdjs/umd) version of tdigest in dist/tdigest.js.
 
 Embed it in HTML like this:
+
 ```
 <script src="dist/tdigest.js"></script>
-<script>
-    var td = new this.tdigest.TDigest();
+<script type="module">
+    import {TDigest} from './tdigest.js';
+
+    var td = new TDigest();
     for (var i=0; i < 1000000; i++) {
         td.push(Math.random());
     }
@@ -106,10 +116,9 @@ Embed it in HTML like this:
 
 See also [example.html](https://github.com/welch/tdigest/blob/master/example.html) in this package.
 
-dependencies
--------------
-`bintrees`: [https://www.npmjs.com/package/bintrees](https://www.npmjs.com/package/bintrees)
+## dependencies
 
+`bintrees`: [https://www.npmjs.com/package/bintrees](https://www.npmjs.com/package/bintrees)
 
 [travis-image]: https://travis-ci.org/welch/tdigest.svg?branch=master
 [travis-url]: https://travis-ci.org/welch/tdigest

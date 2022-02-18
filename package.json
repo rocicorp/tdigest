@@ -1,10 +1,13 @@
 {
   "name": "tdigest",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "javascript implementation of Dunning's T-Digest for streaming quantile approximation",
-  "main": "tdigest.js",
+  "main": "./tdigest.js",
+  "type": "module",
   "scripts": {
-    "test": "mocha specs"
+    "test": "mocha specs",
+    "build": "rm -f tdigest.d.ts && tsc && prettier tdigest.d.ts tdigest.d.ts --write",
+    "format": "prettier --write specs/*.js *.js *.html *.md *.json **/*.js"
   },
   "repository": {
     "type": "git",
@@ -24,13 +27,13 @@
   },
   "homepage": "https://github.com/welch/tdigest",
   "dependencies": {
-    "bintrees": "1.0.1"
+    "bintrees": "github:rocicorp/js_bintrees#v2.0.0"
   },
+  "exports": "./tdigest.js",
   "devDependencies": {
-    "better-assert": "^1.0.2",
-    "chai": "^3.0.0",
-    "grunt": "^0.4.5",
-    "grunt-pure-cjs": "^1.4.0",
-    "mocha": "^2.1.0"
+    "chai": "^4.3.6",
+    "mocha": "^9.2.1",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.5"
   }
 }
