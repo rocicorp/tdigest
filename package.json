@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "javascript implementation of Dunning's T-Digest for streaming quantile approximation",
   "main": "./tdigest.js",
+  "types": "./tdigest.d.ts",
   "type": "module",
   "scripts": {
     "test": "mocha specs",
@@ -27,7 +28,7 @@
   },
   "homepage": "https://github.com/welch/tdigest",
   "dependencies": {
-    "bintrees": "github:rocicorp/js_bintrees#v2.0.0"
+    "bintrees": "rocicorp/js_bintrees#v2.0.0"
   },
   "exports": "./tdigest.js",
   "devDependencies": {
