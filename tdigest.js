@@ -50,6 +50,11 @@ export class TDigest {
   size() {
     return this.centroids.size;
   }
+
+  /**
+   * @param {boolean} [everything]
+   * @returns {{mean: number; n: number}[]}
+   */
   toArray(everything) {
     // return {mean,n} of centroids as an array ordered by mean.
     //
@@ -66,6 +71,7 @@ export class TDigest {
     }
     return result;
   }
+
   summary() {
     var approx = this.discrete ? 'exact ' : 'approximating ';
     var s = [
@@ -78,6 +84,11 @@ export class TDigest {
     ];
     return s.join('\n');
   }
+
+  /**
+   * @param {number | number[]} x
+   * @param {number} [n]
+   */
   push(x, n) {
     // incorporate value or array of values x, having count n into the
     // TDigest. n defaults to 1.
@@ -88,6 +99,10 @@ export class TDigest {
       this._digest(x[i], n);
     }
   }
+
+  /**
+   * @param {{mean: number, n: number} | {mean: number, n: number}[]} c
+   */
   push_centroid(c) {
     // incorporate centroid or array of centroids c
     //
@@ -96,6 +111,7 @@ export class TDigest {
       this._digest(c[i].mean, c[i].n);
     }
   }
+  /** @private */
   _cumulate(exact) {
     // update cumulative counts for each centroid
     //
@@ -118,6 +134,10 @@ export class TDigest {
     });
     this.n = this.last_cumulate = cumn;
   }
+  /**
+   * @param {number} x
+   * @returns {any}
+   */
   find_nearest(x) {
     // find the centroid closest to x. The assumption of
     // unique means and a unique nearest centroid departs from the
@@ -138,6 +158,12 @@ export class TDigest {
       return c;
     }
   }
+  /**
+   * @protected
+   * @param {number} x
+   * @param {number} n
+   * @param {number} cumn
+   */
   _new_centroid(x, n, cumn) {
     // create and insert a new centroid into the digest (don't update
     // cumulatives).
@@ -147,6 +173,12 @@ export class TDigest {
     this.n += n;
   }
 
+  /**
+   * @protected
+   * @param {{ n: number; mean: number; cumn: number; mean_cumn: number; }} nearest
+   * @param {number} x
+   * @param {number} n
+   */
   _addweight(nearest, x, n) {
     // add weight at location x to nearest centroid.  adding x to
     // nearest will not shift its relative position in the tree and
@@ -160,6 +192,12 @@ export class TDigest {
     nearest.n += n;
     this.n += n;
   }
+
+  /**
+   * @private
+   * @param {number} x
+   * @param {number} n
+   */
   _digest(x, n) {
     // incorporate value x, having count n into the TDigest.
     //
@@ -196,6 +234,9 @@ export class TDigest {
       this.compress();
     }
   }
+  /**
+   * @param {number} x
+   */
   bound_mean(x) {
     // find centroids lower and upper such that lower.mean < x <
     // upper.mean or lower.mean === x === upper.mean. Don't call
@@ -206,6 +247,9 @@ export class TDigest {
     var upper = lower.mean === x ? lower : iter.next();
     return [lower, upper];
   }
+  /**
+   * @param {number | number[]} x_or_xlist
+   */
   p_rank(x_or_xlist) {
     // return approximate percentile-ranks (0..1) for data value x.
     // or list of x.  calculated according to
@@ -222,6 +266,11 @@ export class TDigest {
     var ps = xs.map(this._p_rank, this);
     return Array.isArray(x_or_xlist) ? ps : ps[0];
   }
+
+  /**
+   * @private
+   * @param {number} x
+   */
   _p_rank(x) {
     if (this.size() === 0) {
       return undefined;
@@ -248,6 +297,10 @@ export class TDigest {
       return cumn / this.n;
     }
   }
+
+  /**
+   * @param {number} cumn
+   */
   bound_mean_cumn(cumn) {
     // find centroids lower and upper such that lower.mean_cumn < x <
     // upper.mean_cumn or lower.mean_cumn === x === upper.mean_cumn. Don't call
@@ -262,6 +315,11 @@ export class TDigest {
     var upper = lower && lower.mean_cumn === cumn ? lower : iter.next();
     return [lower, upper];
   }
+
+  /**
+   * @param {number | number[]} p_or_plist
+   * @returns {(number | undefined)[] | number | undefined}
+   */
   percentile(p_or_plist) {
     // for percentage p (0..1), or for each p in a list of ps, return
     // the smallest data value q at which at least p percent of the
@@ -281,6 +339,12 @@ export class TDigest {
     var qs = ps.map(this._percentile, this);
     return Array.isArray(p_or_plist) ? qs : qs[0];
   }
+
+  /**
+   * @private
+   * @param {number} p
+   * @returns {undefined | number}
+   */
   _percentile(p) {
     if (this.size() === 0) {
       return undefined;
@@ -305,6 +369,7 @@ export class TDigest {
       return upper.mean;
     }
   }
+
   compress() {
     // TDigests experience worst case compression (none) when input
     // increases monotonically.  Improve on any bad luck by
@@ -325,18 +390,31 @@ export class TDigest {
   }
 }
 
+/**
+ * @param {{ mean: number; }} a
+ * @param {{ mean: number; }} b
+ */
 function compare_centroid_means(a, b) {
   // order two centroids by mean.
   //
   return a.mean > b.mean ? 1 : a.mean < b.mean ? -1 : 0;
 }
 
+/**
+ * @param {{ mean_cumn: number; }} a
+ * @param {{ mean_cumn: number; }} b
+ */
 function compare_centroid_mean_cumns(a, b) {
   // order two centroids by mean_cumn.
   //
   return a.mean_cumn - b.mean_cumn;
 }
 
+/**
+ * @template Item
+ * @param {Item[]} choices
+ * @returns {Item}
+ */
 function pop_random(choices) {
   // remove and return an item randomly chosen from the array of choices
   // (mutates choices)
@@ -360,14 +438,30 @@ export class Digest extends TDigest {
     this.digest_thresh = this.config.thresh || 1000;
     this.n_unique = 0;
   }
+
+  /**
+   * @param {number | number[]} x_or_xlist
+   */
   push(x_or_xlist) {
     super.push(x_or_xlist);
     this.check_continuous();
   }
+  /**
+   * @protected
+   * @param {number} x
+   * @param {number} n
+   * @param {number} cumn
+   */
   _new_centroid(x, n, cumn) {
     this.n_unique += 1;
     super._new_centroid(x, n, cumn);
   }
+  /**
+   * @protected
+   * @param {{ n: number; mean: number; cumn: number; mean_cumn: number; }} nearest
+   * @param {any} x
+   * @param {any} n
+   */
   _addweight(nearest, x, n) {
     if (nearest.n === 1) {
       this.n_unique -= 1;
