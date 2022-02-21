@@ -6,6 +6,11 @@
 import {RBTree} from 'bintrees';
 
 export class TDigest {
+  /**
+   * @param {number | false} [delta]
+   * @param {number} [K]
+   * @param {number} [CX]
+   */
   constructor(delta, K, CX) {
     // allocate a TDigest structure.
     //
@@ -22,9 +27,13 @@ export class TDigest {
     // for quantile estimation during ingest (see cumulate()).  Set to
     // 0 to use exact quantiles for each new point.
     //
+    /** @type {boolean} */
     this.discrete = delta === false;
+    /** @type {number} */
     this.delta = delta || 0.01;
+    /** @type {number} */
     this.K = K === undefined ? 25 : K;
+    /** @type {number} */
     this.CX = CX === undefined ? 1.1 : CX;
     this.centroids = new RBTree(compare_centroid_means);
     this.nreset = 0;

@@ -1,9 +1,18 @@
 export class TDigest {
-  constructor(delta: any, K: any, CX: any);
+  /**
+   * @param {number | false} [delta]
+   * @param {number} [K]
+   * @param {number} [CX]
+   */
+  constructor(delta?: number | false, K?: number, CX?: number);
+  /** @type {boolean} */
   discrete: boolean;
-  delta: any;
-  K: any;
-  CX: any;
+  /** @type {number} */
+  delta: number;
+  /** @type {number} */
+  K: number;
+  /** @type {number} */
+  CX: number;
   centroids: RBTree;
   nreset: number;
   reset(): void;
